@@ -1,0 +1,38 @@
+package com.ai.mentor.config;
+
+import com.ai.mentor.mentor.MentorAgent;
+import com.ai.mentor.mentor.tools.GoalTrackingTools;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
+import dev.langchain4j.model.googleai.GoogleAiGeminiChatModel;
+import dev.langchain4j.service.AiServices;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.time.Duration;
+
+@Configuration
+public class MentorConfig {
+
+    @Value("${gemini.api.key}")
+    private String apiKey;
+
+    @Value("${gemini.model:gemini-3.6-flash}")
+    private String modelName;
+
+    @Bean
+    public MentorAgent mentorAgent(GoalTrackingTools goalTools) {
+        GoogleAiGeminiChatModel model = GoogleAiGeminiChatModel.builder()
+                .apiKey(apiKey)
+                .modelName(modelName)
+                .temperature(0.3)
+                .timeout(Duration.ofSeconds(90))
+                .build();
+
+        return AiServices.builder(MentorAgent.class)
+                .chatLanguageModel(model)
+                .tools(goalTools)
+                .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(20))
+                .build();
+    }
+}
