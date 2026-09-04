@@ -38,7 +38,7 @@ public class MentorController {
                 .replace('\u201D', '"')
                 .replace('\u2013', '-')
                 .replace('\u2014', '-')
-                .replace('\u2026', '.')
+                .replace("\u2026", "...")
                 .replaceAll("[\\p{Cntrl}&&[^\\r\\n\\t]]", "")
                 .replaceAll("[^\\x00-\\x7F]", "")
                 .replaceAll("[ \\t]+\\r?\\n", "\n")
